@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-backend-01
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: java-backend-01
+          image: quyentqghtk/java-backend-01:v1.0.4
+          ports:
+            - containerPort: 8081
+          args: ["--spring.config.location=file:/etc/config/application-prod.properties"]
+          volumeMounts:
+            - name: application-config
+              mountPath: /etc/config
+              readOnly: true
+      volumes:
+        - name: application-config
+          configMap:
+            name: app-prod-config
+            items:
+              - key: application-prod.properties
+                path: application-prod.properties
